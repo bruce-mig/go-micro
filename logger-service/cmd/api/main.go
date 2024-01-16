@@ -53,6 +53,8 @@ func main() {
 	err = rpc.Register(new(RPCServer))
 	go app.rpcLIsten()
 
+	go app.gRPCListen()
+
 	// start web server
 	log.Println("starting service on port", webPort)
 	srv := &http.Server{
