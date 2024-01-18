@@ -1,0 +1,22 @@
+{{template "base" .}}
+
+{{define "content"}}
+    {{$entry := index .Data "entry"}}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1 class="mt-3">Log Entry</h1>
+                <hr>
+
+                <div>
+                    <strong>ID:</strong> {{$entry.ID}}<br>
+                    <strong>Event:</strong> {{$entry.Name}}<br>
+                    <strong>Date/Time:</strong> {{$entry.CreatedAt.Format "2006-01-02 03:04:05" }} UTC<br>
+                    <strong>Details:</strong><br>
+                    <hr>
+                    {{$entry.Data}}
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}

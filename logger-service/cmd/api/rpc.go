@@ -8,6 +8,9 @@ import (
 	"github.com/bruce-mig/go-micro/log-service/data"
 )
 
+// RPCServer is the type for our RPC Server.
+// Methods that take this as a receiver are available
+// over RPC, as long as they are exported.
 type RPCServer struct{}
 
 // RPCPayload is the type for data we receive from RPC
@@ -29,6 +32,7 @@ func (r *RPCServer) LogInfo(payload RPCPayload, resp *string) error {
 		return err
 	}
 
+	// resp is the message sent back to the RPC caller
 	*resp = "Processed payload via RPC:" + payload.Name
 	return nil
 }
