@@ -28,7 +28,7 @@ services:
     depends_on:
       - mongo
     volumes:
-     - ./logger-service/templates/:/app/templates
+     - ../logger-service/templates/:/app/templates
 
   mail-service:
     build:
