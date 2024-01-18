@@ -20,6 +20,12 @@
 		},
 		{
 			"path": "listener-service"
+		},
+		{
+			"path": "db-data"
+		},
+		{
+			"path": "k8s"
 		}
 	]
 }
