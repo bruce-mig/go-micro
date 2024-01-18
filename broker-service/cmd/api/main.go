@@ -1,9 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log"
-	"math"
 	"net/http"
 	"os"
 	"time"
@@ -11,15 +11,21 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+// webPort the port that we listen on for api calls
 const webPort = "80"
 
+// Config is the type we'll use as a receiver to share application
+// configuration around our app.
 type Config struct {
-	Rabbit *amqp.Connection
+	Rabbit         *amqp.Connection
+	LogServiceURLs map[string]string
+	//MailServiceURLs map[string]string
+	//AuthServiceURLs map[string]string
 }
 
 func main() {
 	// try to connect to rabbitmq
-	rabbitConn, err := connect()
+	rabbitConn, err := connectToRabbit()
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
@@ -45,33 +51,34 @@ func main() {
 	}
 }
 
-func connect() (*amqp.Connection, error) {
+// connectToRabbit tries to connect to RabbitMQ, for up to 30 seconds
+func connectToRabbit() (*amqp.Connection, error) {
+	var rabbitConn *amqp.Connection
 	var counts int64
-	var backOff = 1 * time.Second
-	var connection *amqp.Connection
+	var rabbitURL = os.Getenv("RABBIT_URL")
 
 	// don't continue until rabbit is ready
 	for {
-		c, err := amqp.Dial("amqp://guest:guest@rabbitmq")
+		c, err := amqp.Dial(rabbitURL)
 		if err != nil {
 			fmt.Println("RabbitMQ not yet ready...")
 			counts++
 		} else {
 			log.Println("Connected to RabbitMQ!")
-			connection = c
+			rabbitConn = c
 			break
 		}
 
-		if counts > 10 {
+		if counts > 15 {
 			fmt.Println(err)
-			return nil, err
+			return nil, errors.New("cannot connect to rabbit")
 		}
 
-		backOff = time.Duration(math.Pow(float64(counts), 2)) * time.Second
-		log.Println("backing off...")
-		time.Sleep(backOff)
+		fmt.Println("Backing off for 2 seconds...")
+		time.Sleep(2 * time.Second)
 		continue
 	}
 
-	return connection, nil
+	fmt.Println("Connected to RabbitMQ!")
+	return rabbitConn, nil
 }

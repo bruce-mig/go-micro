@@ -21,12 +21,19 @@ func (app *Config) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
+	// a heartbeat route, to ensure things are up
 	mux.Use(middleware.Heartbeat("/ping"))
+
+	// this route is just to ensure things work, and is never
+	// used after that
+	mux.Get("/", app.Broker)
 
 	mux.Post("/", app.Broker)
 
+	// a route for everything
 	mux.Post("/handle", app.HandleSubmission)
 
+	// grpc route
 	mux.Post("/log-grpc", app.LogViaGRPC)
 
 	return mux
