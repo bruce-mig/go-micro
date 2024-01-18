@@ -158,18 +158,18 @@ test:
 ## clean: runs go clean and deletes binaries
 clean:
 	@echo "Cleaning..."
-	@cd broker-service && rm -f ${BROKER_BINARY}
-	@cd broker-service && go clean
-	@cd listener-service && rm -f ${LISTENER_BINARY}
-	@cd listener-service && go clean
-	@cd authentication-service && rm -f ${AUTH_BINARY}
-	@cd authentication-service && go clean
-	@cd mail-service && rm -f ${MAIL_BINARY}
-	@cd mail-service && go clean
-	@cd logger-service && rm -f ${LOGGER_BINARY}
-	@cd logger-service && go clean
-	@cd front-end && go clean
-	@cd front-end && rm -f ${FRONT_END_BINARY}
+	@cd ../broker-service && rm -f ${BROKER_BINARY}
+	@cd ../broker-service && go clean
+	@cd ../listener-service && rm -f ${LISTENER_BINARY}
+	@cd ../listener-service && go clean
+	@cd ../authentication-service && rm -f ${AUTH_BINARY}
+	@cd ../authentication-service && go clean
+	@cd ../mail-service && rm -f ${MAIL_BINARY}
+	@cd ../mail-service && go clean
+	@cd ../logger-service && rm -f ${LOGGER_BINARY}
+	@cd ../logger-service && go clean
+	@cd ../front-end && go clean
+	@cd ../front-end && rm -f ${FRONT_END_BINARY}
 	@echo "Cleaned!"
 
 ## help: displays help
