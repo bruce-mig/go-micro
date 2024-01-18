@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/bruce-mig/go-micro/listener/event"
+	"github.com/bruce-mig/go-micro/listener/lib/event"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -23,31 +23,36 @@ func main() {
 	// start listening for messages
 	log.Println("Listening for and consuming RabbitMQ messages...")
 
-	// create consumer
+	// create a new consumer
 	consumer, err := event.NewConsumer(rabbitConn)
 	if err != nil {
 		panic(err)
 	}
 
-	// watch the queue and consumer events
+	// consumer.Listen watches the queue and consumes events for all the provided topics.
 	err = consumer.Listen([]string{"log.INFO", "log.WARNING", "log.ERROR"})
 	if err != nil {
 		log.Println(err)
 	}
 }
 
+// connect tries to connect to RabbitMQ, and delays between attempts.
+// If we can't connect after 10 tries (with increasing delays), return an error
 func connect() (*amqp.Connection, error) {
 	var counts int64
 	var backOff = 1 * time.Second
 	var connection *amqp.Connection
+	var rabbitURL = os.Getenv("RABBIT_URL")
 
 	// don't continue until rabbit is ready
 	for {
-		c, err := amqp.Dial("amqp://guest:guest@rabbitmq")
+		c, err := amqp.Dial(rabbitURL)
 		if err != nil {
 			fmt.Println("RabbitMQ not yet ready...")
 			counts++
 		} else {
+			// we have a connection to rabbitmq, so set connection = c and break out of
+			// this loop
 			log.Println("Connected to RabbitMQ!")
 			connection = c
 			break
@@ -58,6 +63,7 @@ func connect() (*amqp.Connection, error) {
 			return nil, err
 		}
 
+		fmt.Printf("Backing off for %d seconds...\n", int(math.Pow(float64(counts), 2)))
 		backOff = time.Duration(math.Pow(float64(counts), 2)) * time.Second
 		log.Println("backing off...")
 		time.Sleep(backOff)
