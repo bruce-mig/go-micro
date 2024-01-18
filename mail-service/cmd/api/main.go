@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// Config is the application Config, shared with functions by using it as a receiver
 type Config struct {
 	Mailer Mail
 }
@@ -15,12 +16,14 @@ type Config struct {
 const webPort = "80"
 
 func main() {
+	// create our configuration
 	app := Config{
 		Mailer: createMail(),
 	}
 
-	log.Println("Starting mail service on port", webPort)
+	log.Println("Starting mail-service on port", webPort)
 
+	// define a server that listens on port 80 and uses our routes()
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
@@ -33,6 +36,9 @@ func main() {
 
 }
 
+// createMail creates a variable of type Mail and populates its values.
+// Typically, this kind of information comes from the environment, or from
+// command line parameters.
 func createMail() Mail {
 	port, _ := strconv.Atoi(os.Getenv("MAIL_PORT"))
 	m := Mail{

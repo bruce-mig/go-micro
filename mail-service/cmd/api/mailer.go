@@ -9,7 +9,7 @@ import (
 	mail "github.com/xhit/go-simple-mail/v2"
 )
 
-// type for the mail server to communicate with
+// Mail holds the information necessary to connect to an SMTP server
 type Mail struct {
 	Domain      string
 	Host        string
@@ -21,7 +21,7 @@ type Mail struct {
 	FromName    string
 }
 
-// content to use for an individual email message
+// Message is the type for an email message
 type Message struct {
 	From        string
 	FromName    string
@@ -32,6 +32,8 @@ type Message struct {
 	DataMap     map[string]any
 }
 
+// SendSMTPMessage builds and sends an email message using SMTP. This is called by ListenForMail,
+// and can also be called directly when necessary
 func (m *Mail) SendSMTPMessage(msg Message) error {
 	if msg.From == "" {
 		msg.From = m.FromAddress
@@ -80,6 +82,7 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	email.SetBody(mail.TextPlain, plainMessage)
 	email.AddAlternative(mail.TextHTML, formattedMessage)
 
+	// add attachments, if any
 	if len(msg.Attachments) > 0 {
 		for _, x := range msg.Attachments {
 			email.AddAttachment(x)
@@ -94,6 +97,7 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	return nil
 }
 
+// buildHTMLMessage creates the html version of the message
 func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
 	templateToRender := "./templates/mail.html.gohtml"
 
@@ -116,6 +120,7 @@ func (m *Mail) buildHTMLMessage(msg Message) (string, error) {
 	return formattedMessage, nil
 }
 
+// buildPlainTextMessage creates the plaintext version of the message
 func (m *Mail) buildPlainTextMessage(msg Message) (string, error) {
 	templateToRender := "./templates/mail.plain.gohtml"
 
@@ -134,6 +139,7 @@ func (m *Mail) buildPlainTextMessage(msg Message) (string, error) {
 	return plainMessage, nil
 }
 
+// inlineCSS takes html input as a string, and inlines css where possible
 func (m *Mail) inlineCSS(s string) (string, error) {
 	options := premailer.Options{
 		RemoveClasses:     false,
@@ -154,6 +160,7 @@ func (m *Mail) inlineCSS(s string) (string, error) {
 	return html, nil
 }
 
+// getEncryption returns the appropriate encryption type based on a string value
 func (m *Mail) getEncryption(s string) mail.Encryption {
 	switch s {
 	case "tls":
