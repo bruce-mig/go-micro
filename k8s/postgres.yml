@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: "postgres:16.1"
+        env:
+          - name: POSTGRES_USER
+            value: "postgres"
+          - name: POSTGRES_PASSWORD
+            value: "password"
+          - name: "POSTGRES_DB"
+            value: "users"
+        ports:
+          - containerPort: 5432
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        volumes:
+          - ./db-data/postgres/:/var/lib/postgresql/data/
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
