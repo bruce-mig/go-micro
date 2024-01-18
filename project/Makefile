@@ -41,7 +41,7 @@ build_dockerfiles: build_auth build_broker build_listener build_logger build_mai
 	docker build -f ../logger-service/logger-service.dockerfile -t bmigeri/logger:${LOGGER_VERSION} -t bmigeri/logger:latest ../logger-service/
 
 ## push_dockerfiles: pushes tagged versions to docker hub
-push_dockerfiles: build_dockerfiles
+push_dockerfiles: 
 	docker push -a bmigeri/authentication
 	docker push -a bmigeri/broker
 	docker push -a bmigeri/listener
@@ -50,9 +50,9 @@ push_dockerfiles: build_dockerfiles
 	@echo "Done!"
 
 ## front_end_linux: builds linux executable for front end
-front_end:
+front_end_linux:
 	@echo "Building linux version of front end..."
-	cd ../front-end && env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o frontEnd ./cmd/web
+	cd ../front-end && env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o frontEndLinux ./cmd/web
 	@echo "Done!"
 
 ## build_broker: builds the broker binary as a linux executable
@@ -85,7 +85,7 @@ build_auth:
 	cd ../authentication-service && env GOOS=linux CGO_ENABLED=0 go build -o ${AUTH_BINARY} ./cmd/api
 	@echo "Authentication binary built!!"
 
-## build_front: builds the frone end binary
+## build_front: builds the front end binary
 build_front:
 	@echo "Building front end binary..."
 	cd ../front-end && env CGO_ENABLED=0 go build -o ${FRONT_END_BINARY} ./cmd/web
