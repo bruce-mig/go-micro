@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/bruce-mig/go-micro/log-service/data"
 	"github.com/bruce-mig/go-micro/log-service/logs"
@@ -26,8 +27,9 @@ func (l *LogServer) WriteLog(ctx context.Context, req *logs.LogRequest) (*logs.L
 
 	// write the log
 	logEntry := data.LogEntry{
-		Name: input.Name,
-		Data: input.Data,
+		Name:      input.Name,
+		Data:      input.Data,
+		CreatedAt: time.Now(),
 	}
 
 	err := l.Models.LogEntry.Insert(logEntry)
