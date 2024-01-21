@@ -41,7 +41,7 @@ build_dockerfiles: build_auth build_broker build_listener build_logger build_mai
 	docker build -f ../logger-service/logger-service.dockerfile -t bmigeri/logger:${LOGGER_VERSION} -t bmigeri/logger:latest ../logger-service/
 
 ## push_dockerfiles: pushes tagged versions to docker hub
-push_dockerfiles: 
+push_dockerfiles: build_dockerfile
 	docker push -a bmigeri/authentication
 	docker push -a bmigeri/broker
 	docker push -a bmigeri/listener
