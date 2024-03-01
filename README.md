@@ -21,6 +21,10 @@ starts the following services:
 - etcd - used for service discovery
 - mailhog - used as a fake mail server to work with the mail service
 
+## System Design 
+
+![System Design for go-micro](https://github.com/bruce-mig/diagram-as-code/blob/main/go_micro.png)
+
 ## Running the project
 From the root level of the project, execute this command (this assumes that you have 
 [GNU make](https://www.gnu.org/software/make/) and a recent version
